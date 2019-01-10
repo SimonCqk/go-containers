@@ -1,4 +1,4 @@
-package pond
+package containers
 
 import "testing"
 
