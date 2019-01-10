@@ -32,22 +32,6 @@ func (q *Queue) Add(elem interface{}) {
 	q.size++
 }
 
-// grow scale the queue buffer by doubling up to queue.size.
-func (q *Queue) grow() {
-	newBuff := make([]interface{}, q.size<<1)
-
-	if q.tail > q.head {
-		copy(newBuff, q.buffer)
-	} else {
-		n := copy(newBuff, q.buffer[q.head:])
-		copy(newBuff[n:], q.buffer[:q.tail])
-	}
-
-	q.head = 0
-	q.tail = q.size
-	q.buffer = newBuff
-}
-
 // Peek return the first element in queue but never remove it.
 func (q *Queue) Peek() (elem interface{}, err error) {
 	if q.size <= 0 {
@@ -59,7 +43,7 @@ func (q *Queue) Peek() (elem interface{}, err error) {
 // PopHead remove the first element in queue.
 func (q *Queue) Pop() (elem interface{}, err error) {
 	if q.size <= 0 {
-		return nil, errors.New("call Peek() on a empty queue")
+		return nil, errors.New("call Pop() on a empty queue")
 	}
 	elem = q.buffer[q.head]
 	q.buffer[q.head] = nil
@@ -90,6 +74,22 @@ func (q *Queue) Free() {
 		q.tail = q.size
 		q.buffer = newBuff
 	}
+}
+
+// grow scale the queue buffer by doubling up to queue.size.
+func (q *Queue) grow() {
+	newBuff := make([]interface{}, q.size<<1)
+
+	if q.tail > q.head {
+		copy(newBuff, q.buffer)
+	} else {
+		n := copy(newBuff, q.buffer[q.head:])
+		copy(newBuff[n:], q.buffer[:q.tail])
+	}
+
+	q.head = 0
+	q.tail = q.size
+	q.buffer = newBuff
 }
 
 func isPowOf2(num int) bool {

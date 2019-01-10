@@ -1,21 +1,23 @@
 package containers
 
-import "testing"
+import (
+	"testing"
+)
 
-func TestQueue(t *testing.T) {
-	q := NewQueue()
-	for i := 0; i < 1000; i++ {
-		q.Add(i)
+func TestStack(t *testing.T) {
+	s := NewStack()
+	for i := 0; i <= 1000; i++ {
+		s.Push(i)
 	}
-	for i := 0; i < 1000; i++ {
-		ele, err := q.Peek()
+	for i := 1000; i >= 0; i-- {
+		ele, err := s.Peek()
 		if err != nil {
 			t.Error("error: ", err)
 		}
 		if ele = ele.(int); ele != i {
 			t.Error(i, " is expected")
 		}
-		ele, err = q.Pop()
+		ele, err = s.Pop()
 		if err != nil {
 			t.Error("error: ", err)
 		}
