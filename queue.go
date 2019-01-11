@@ -20,8 +20,8 @@ func NewQueue() *Queue {
 	return &Queue{buffer: make([]interface{}, initQueueSize)}
 }
 
-// Add push a new element into queue
-func (q *Queue) Add(elem interface{}) {
+// Push push a new element into queue
+func (q *Queue) Push(elem interface{}) {
 	if q.size == len(q.buffer) {
 		q.grow()
 	}
