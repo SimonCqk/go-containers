@@ -10,12 +10,14 @@ func NewSet() *Set {
 	return &Set{core: make(map[interface{}]bool)}
 }
 
+// Add add a new element into set.
 func (s *Set) Add(elem interface{}) {
 	if _, ok := s.core[elem]; !ok {
 		s.core[elem] = true
 	}
 }
 
+// All return all elements in set.
 func (s *Set) All() []interface{} {
 	all := make([]interface{}, 0, len(s.core))
 	for each := range s.core {
@@ -24,6 +26,7 @@ func (s *Set) All() []interface{} {
 	return all
 }
 
+// Remove remove the specified element in set.
 func (s *Set) Remove(elem interface{}) error {
 	if _, ok := s.core[elem]; !ok {
 		return errors.New("no such element in Set")
@@ -32,6 +35,7 @@ func (s *Set) Remove(elem interface{}) error {
 	return nil
 }
 
+// Size return current number of elements in set.
 func (s *Set) Size() int {
 	return len(s.core)
 }
