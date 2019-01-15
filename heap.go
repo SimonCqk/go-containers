@@ -3,28 +3,41 @@ package containers
 import (
 	"container/heap"
 	"github.com/pkg/errors"
+	"reflect"
 )
 
 const initHeapSize = 8
 
-// Less is a interface for comparing two values stored in
-// Heap. If this < l, then return true, else return false.
-type Less interface {
-	Less(l Less) bool
-}
+var lessComparator map[reflect.Kind]lessCompFunc
+
+type lessCompFunc func(a, b interface{}) bool
 
 // Minimum heap implementation.
 type Heap struct {
 	core *heapCore
 }
 
-func NewHeap() *Heap {
+// NewHeap make a heap, if contained type are not built-in types, you
+// should specify a lessCompFunc to compare two interface{}.
+func NewHeap(lessCompFunc ...lessCompFunc) *Heap {
 	return &Heap{core: &heapCore{
-		buffer: make([]Less, 0, initHeapSize),
+		buffer: make([]interface{}, 0, initHeapSize),
+		// default nil, lazy bind when first element pushed into heap.
+		lessComparator: append(lessCompFunc, nil)[0],
 	}}
 }
 
-func (h *Heap) Push(elem Less) {
+// Push append a new element to heap.
+func (h *Heap) Push(elem interface{}) {
+	// lessComparator is not specified, take it as a built-in type,
+	// or panic.
+	if h.core.lessComparator == nil {
+		if _, ok := lessComparator[reflect.ValueOf(elem).Kind()]; ok {
+			h.core.lessComparator = lessComparator[reflect.ValueOf(elem).Kind()]
+		} else {
+			panic("unsupported type, or specify a LessComparator when make a new Heap")
+		}
+	}
 	heap.Push(h.core, elem)
 }
 
@@ -41,12 +54,12 @@ func (h *Heap) Size() int {
 
 // basic implementation of container.heap.Interface
 type heapCore struct {
-	heap.Interface
-	buffer []Less
+	buffer         []interface{}
+	lessComparator lessCompFunc
 }
 
 func (h *heapCore) grow() {
-	newBuff := make([]Less, len(h.buffer)<<1)
+	newBuff := make([]interface{}, len(h.buffer)<<1)
 	copy(newBuff, newBuff)
 	h.buffer = newBuff
 }
@@ -60,10 +73,10 @@ func (h *heapCore) Swap(i, j int) {
 }
 
 func (h *heapCore) Less(i, j int) bool {
-	return h.buffer[i].Less(h.buffer[j])
+	return h.lessComparator(h.buffer[i], h.buffer[j])
 }
 
-func (h *heapCore) Push(elem Less) {
+func (h *heapCore) Push(elem interface{}) {
 	h.buffer = append(h.buffer, elem)
 }
 
@@ -71,4 +84,23 @@ func (h *heapCore) Pop() interface{} {
 	min := h.buffer[0]
 	h.buffer = h.buffer[1:]
 	return min
+}
+
+func init() {
+	// dirty basic type less comparator
+	lessComparator = map[reflect.Kind]lessCompFunc{
+		reflect.Uint:    func(a, b interface{}) bool { return a.(uint) < b.(uint) },
+		reflect.Uint8:   func(a, b interface{}) bool { return a.(uint8) < b.(uint8) },
+		reflect.Uint16:  func(a, b interface{}) bool { return a.(uint16) < b.(uint16) },
+		reflect.Uint32:  func(a, b interface{}) bool { return a.(uint32) < b.(uint32) },
+		reflect.Uint64:  func(a, b interface{}) bool { return a.(uint64) < b.(uint64) },
+		reflect.Int:     func(a, b interface{}) bool { return a.(int) < b.(int) },
+		reflect.Int8:    func(a, b interface{}) bool { return a.(int8) < b.(int8) },
+		reflect.Int16:   func(a, b interface{}) bool { return a.(int16) < b.(int16) },
+		reflect.Int32:   func(a, b interface{}) bool { return a.(int32) < b.(int32) },
+		reflect.Int64:   func(a, b interface{}) bool { return a.(int64) < b.(int64) },
+		reflect.Float32: func(a, b interface{}) bool { return a.(float32) < b.(float32) },
+		reflect.Float64: func(a, b interface{}) bool { return a.(float64) < b.(float64) },
+		reflect.String:  func(a, b interface{}) bool { return a.(string) < b.(string) },
+	}
 }
