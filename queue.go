@@ -47,7 +47,7 @@ func (q *Queue) Pop() (elem interface{}) {
 	n := len(q.buffer)
 	elem = q.buffer[q.head]
 	q.size--
-	// shrink for save  memory
+	// shrink for saving memory
 	if 4*q.size < n && n > initQueueSize {
 		// size of buffer must be power of 2 for bitwise modulus.
 		newSize := shiftToPowOf2(q.size)
@@ -62,6 +62,7 @@ func (q *Queue) Pop() (elem interface{}) {
 			n := copy(newBuff, q.buffer[q.head+1:])
 			copy(newBuff[n:], q.buffer[:q.tail])
 		}
+		// reset points
 		q.head = 0
 		q.tail = q.size
 		q.buffer = newBuff
