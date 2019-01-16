@@ -10,6 +10,7 @@ const initHeapSize = 8
 
 var lessComparator map[reflect.Kind]LessCompFunc
 
+// LessCompFunc provide a entry for compare two instance by customized rule.
 type LessCompFunc func(a, b interface{}) bool
 
 // Minimum heap implementation.
@@ -41,11 +42,21 @@ func (h *Heap) Push(elem interface{}) {
 	heap.Push(h.core, elem)
 }
 
+// Pop remove and return the min value element in heap, if heap is empty,
+// return a error.
 func (h *Heap) Pop() (interface{}, error) {
 	if h.core.Len() == 0 {
 		return nil, errors.New("pop on a empty heap")
 	}
 	return heap.Pop(h.core), nil
+}
+
+// Top return the top(min) element in heap.
+func (h *Heap) Top() interface{} {
+	if h.Size() == 0 {
+		return nil
+	}
+	return h.core.buffer[h.core.Len()-1]
 }
 
 func (h *Heap) Size() int {
