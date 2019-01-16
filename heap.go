@@ -81,8 +81,9 @@ func (h *heapCore) Push(elem interface{}) {
 }
 
 func (h *heapCore) Pop() interface{} {
-	min := h.buffer[0]
-	h.buffer = h.buffer[1:]
+	n := len(h.buffer) - 1
+	min := h.buffer[n]
+	h.buffer = h.buffer[:n]
 	return min
 }
 
