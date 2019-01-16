@@ -8,16 +8,16 @@ func TestQueue(t *testing.T) {
 		q.Push(i)
 	}
 	for i := 0; i < 1000; i++ {
-		ele, err := q.Peek()
-		if err != nil {
-			t.Error("error: ", err)
+		ele := q.Peek()
+		if ele == nil {
+			t.Error("got nil when Peek.")
 		}
 		if ele = ele.(int); ele != i {
 			t.Error(i, " is expected")
 		}
-		ele, err = q.Pop()
-		if err != nil {
-			t.Error("error: ", err)
+		ele = q.Pop()
+		if ele == nil {
+			t.Error("got nil when Pop.")
 		}
 		if ele = ele.(int); ele != i {
 			t.Error(i, " is expected")

@@ -1,7 +1,6 @@
 package containers
 
 import (
-	"errors"
 	"math"
 )
 
@@ -33,47 +32,51 @@ func (q *Queue) Push(elem interface{}) {
 }
 
 // Peek return the first element in queue but never remove it.
-func (q *Queue) Peek() (elem interface{}, err error) {
+func (q *Queue) Peek() interface{} {
 	if q.size <= 0 {
-		return nil, errors.New("call Peek() on a empty queue")
+		return nil
 	}
-	return q.buffer[q.head], nil
+	return q.buffer[q.head]
 }
 
 // PopHead remove the first element in queue.
-func (q *Queue) Pop() (elem interface{}, err error) {
+func (q *Queue) Pop() (elem interface{}) {
 	if q.size <= 0 {
-		return nil, errors.New("call Pop() on a empty queue")
+		return nil
 	}
+	n := len(q.buffer)
 	elem = q.buffer[q.head]
+	q.size--
+	// shrink for save  memory
+	if 4*q.size < n && n > initQueueSize {
+		// size of buffer must be power of 2 for bitwise modulus.
+		newSize := shiftToPowOf2(q.size)
+		if newSize < initQueueSize {
+			newSize = initQueueSize
+		}
+		newBuff := make([]interface{}, newSize)
+		// deprecate head element directly.
+		if q.tail > q.head {
+			copy(newBuff, q.buffer[q.head+1:q.tail])
+		} else {
+			n := copy(newBuff, q.buffer[q.head+1:])
+			copy(newBuff[n:], q.buffer[:q.tail])
+		}
+		q.head = 0
+		q.tail = q.size
+		q.buffer = newBuff
+		return
+	}
+
 	q.buffer[q.head] = nil
 	// bitwise modulus
 	q.head = (q.head + 1) & (len(q.buffer) - 1)
-	q.size--
 	return
 }
 
 // Size return current number of elements hold in queue.
 func (q *Queue) Size() int {
 	return q.size
-}
-
-// Free release useless memory, only triggered when half of queue is idle.
-func (q *Queue) Free() {
-	if len(q.buffer) > 2*q.size {
-		newBuff := make([]interface{}, shiftToPowOf2(q.size))
-
-		if q.tail > q.head {
-			copy(newBuff, q.buffer[q.head:q.tail])
-		} else {
-			n := copy(newBuff, q.buffer[q.head:])
-			copy(newBuff[:n], q.buffer[:q.tail])
-		}
-
-		q.head = 0
-		q.tail = q.size
-		q.buffer = newBuff
-	}
 }
 
 // grow scale the queue buffer by doubling up to queue.size.

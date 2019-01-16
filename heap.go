@@ -2,7 +2,6 @@ package containers
 
 import (
 	"container/heap"
-	"github.com/pkg/errors"
 	"reflect"
 )
 
@@ -43,12 +42,12 @@ func (h *Heap) Push(elem interface{}) {
 }
 
 // Pop remove and return the min value element in heap, if heap is empty,
-// return a error.
-func (h *Heap) Pop() (interface{}, error) {
+// return nil.
+func (h *Heap) Pop() interface{} {
 	if h.core.Len() == 0 {
-		return nil, errors.New("pop on a empty heap")
+		return nil
 	}
-	return heap.Pop(h.core), nil
+	return heap.Pop(h.core)
 }
 
 // Top return the top(min) element in heap.
