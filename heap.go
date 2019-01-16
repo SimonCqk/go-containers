@@ -8,9 +8,9 @@ import (
 
 const initHeapSize = 8
 
-var lessComparator map[reflect.Kind]lessCompFunc
+var lessComparator map[reflect.Kind]LessCompFunc
 
-type lessCompFunc func(a, b interface{}) bool
+type LessCompFunc func(a, b interface{}) bool
 
 // Minimum heap implementation.
 type Heap struct {
@@ -18,8 +18,8 @@ type Heap struct {
 }
 
 // NewHeap make a heap, if contained type are not built-in types, you
-// should specify a lessCompFunc to compare two interface{}.
-func NewHeap(lessCompFunc ...lessCompFunc) *Heap {
+// should specify a LessCompFunc to compare two interface{}.
+func NewHeap(lessCompFunc ...LessCompFunc) *Heap {
 	return &Heap{core: &heapCore{
 		buffer: make([]interface{}, 0, initHeapSize),
 		// default nil, lazy bind when first element pushed into heap.
@@ -55,7 +55,7 @@ func (h *Heap) Size() int {
 // basic implementation of container.heap.Interface
 type heapCore struct {
 	buffer         []interface{}
-	lessComparator lessCompFunc
+	lessComparator LessCompFunc
 }
 
 func (h *heapCore) grow() {
@@ -89,7 +89,7 @@ func (h *heapCore) Pop() interface{} {
 
 func init() {
 	// dirty basic type less comparator
-	lessComparator = map[reflect.Kind]lessCompFunc{
+	lessComparator = map[reflect.Kind]LessCompFunc{
 		reflect.Uint:    func(a, b interface{}) bool { return a.(uint) < b.(uint) },
 		reflect.Uint8:   func(a, b interface{}) bool { return a.(uint8) < b.(uint8) },
 		reflect.Uint16:  func(a, b interface{}) bool { return a.(uint16) < b.(uint16) },
