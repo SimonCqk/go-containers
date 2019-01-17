@@ -16,28 +16,26 @@ func (e elements) Less(i, j int) bool { return e[i].Priority < e[j].Priority }
 func TestPriorityQueue(t *testing.T) {
 	pq := NewPriorityQueue()
 	rnd := rand.New(rand.NewSource(time.Now().UnixNano()))
-	elements := elements(make([]*Element, 0, 10))
-	for i := 0; i < 10; i++ {
+	elements := elements(make([]*Element, 0, 1000))
+	for i := 0; i < 1000; i++ {
 		elem := &Element{Value: i, Priority: rnd.Intn(10000)}
 		elements = append(elements, elem)
 		pq.Push(elem.Value, elem.Priority)
 	}
 	sort.Sort(elements)
-	for i := 9; i >= 0; i-- {
+	for i := 999; i >= 0; i-- {
 		elem := pq.Peek()
 		if elem == nil {
 			t.Error("empty priority queue when Peek.")
 		}
-		if elem.Priority != elements[i].Priority ||
-			elem.Value != elements[i].Value {
+		if elem.Priority != elements[i].Priority {
 			t.Errorf("%v is expected, got %v", elements[i], *elem)
 		}
 		elem = pq.Pop()
 		if elem == nil {
 			t.Error("empty priority queue when Peek.")
 		}
-		if elem.Priority != elements[i].Priority ||
-			elem.Value != elements[i].Value {
+		if elem.Priority != elements[i].Priority {
 			t.Errorf("%v is expected, got %v", elements[i], *elem)
 		}
 	}

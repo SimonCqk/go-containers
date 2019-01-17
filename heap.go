@@ -2,6 +2,7 @@ package containers
 
 import (
 	"container/heap"
+	"fmt"
 	"reflect"
 )
 
@@ -11,6 +12,14 @@ var lessComparator map[reflect.Kind]LessCompFunc
 
 // LessCompFunc provide a entry for compare two instance by customized rule.
 type LessCompFunc func(a, b interface{}) bool
+
+func RegisterNewLessComparator(kind reflect.Kind, f LessCompFunc) error {
+	if _, exist := lessComparator[kind]; exist {
+		return fmt.Errorf("less comparator of kind[%v] has existed", kind)
+	}
+	lessComparator[kind] = f
+	return nil
+}
 
 // Minimum heap implementation.
 type Heap struct {

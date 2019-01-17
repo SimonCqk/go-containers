@@ -1,5 +1,7 @@
 package containers
 
+import "reflect"
+
 // Element indicate the elements contained in priority queue,
 // including a real value and its priority.
 type Element struct {
@@ -9,7 +11,14 @@ type Element struct {
 
 // LessCompFunc for comparing two Element instance.
 func elementLessComp(a, b interface{}) bool {
-	return a.(*Element).Priority < b.(*Element).Priority
+	e1 := a.(*Element)
+	e2 := b.(*Element)
+	if e1.Priority == e2.Priority {
+		if _, ok := lessComparator[reflect.ValueOf(e1.Value).Kind()]; ok {
+			return lessComparator[reflect.ValueOf(e1.Value).Kind()](e1.Value, e2.Value)
+		}
+	}
+	return e1.Priority < e2.Priority
 }
 
 // NewPriorityQueue make a new priority queue instance.
