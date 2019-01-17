@@ -55,6 +55,7 @@ func (q *Queue) Pop() (elem interface{}) {
 			newSize = initQueueSize
 		}
 		newBuff := make([]interface{}, newSize)
+		q.buffer[q.head] = nil // avoid memory leak
 		// deprecate head element directly.
 		if q.tail > q.head {
 			copy(newBuff, q.buffer[q.head+1:q.tail])
