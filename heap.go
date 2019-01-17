@@ -17,7 +17,7 @@ type Heap struct {
 	core *heapCore
 }
 
-// NewHeap make a heap, if contained type are not built-in types, you
+// NewHeap make a heap, if contained type is NOT built-in types, you
 // should specify a LessCompFunc to compare two interface{}.
 func NewHeap(lessCompFunc ...LessCompFunc) *Heap {
 	return &Heap{core: &heapCore{
@@ -55,7 +55,7 @@ func (h *Heap) Top() interface{} {
 	if h.Size() == 0 {
 		return nil
 	}
-	return h.core.buffer[h.core.Len()-1]
+	return h.core.buffer[0]
 }
 
 func (h *Heap) Size() int {

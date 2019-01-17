@@ -21,7 +21,14 @@ func TestHeapInt(t *testing.T) {
 	}
 	sort.Ints(nums)
 	for i := 0; i < 1000; i++ {
-		num := h.Pop()
+		num := h.Top()
+		if num == nil {
+			t.Error("got nil when Top")
+		}
+		if num != nums[i] {
+			t.Error(nums[i], " is expected, got ", num)
+		}
+		num = h.Pop()
 		if num == nil {
 			t.Error("got nil when Pop")
 		}
@@ -45,7 +52,14 @@ func TestHeapFloat(t *testing.T) {
 	}
 	sort.Float64s(nums)
 	for i := 0; i < 1000; i++ {
-		num := h.Pop()
+		num := h.Top()
+		if num == nil {
+			t.Error("got nil when Top")
+		}
+		if num != nums[i] {
+			t.Error(nums[i], " is expected, got ", num)
+		}
+		num = h.Pop()
 		if num == nil {
 			t.Error("got nil when Pop")
 		}
@@ -77,7 +91,14 @@ func TestHeapStr(t *testing.T) {
 	}
 	sort.Strings(strSlice)
 	for i := 0; i < 1000; i++ {
-		str := h.Pop()
+		str := h.Top()
+		if str == nil {
+			t.Error("got nil when Top")
+		}
+		if str != strSlice[i] {
+			t.Error(strSlice[i], " is expected, got ", str)
+		}
+		str = h.Pop()
 		if str == nil {
 			t.Error("got nil when Pop")
 		}
@@ -118,11 +139,19 @@ func TestHeapCustomized(t *testing.T) {
 	}
 	sort.Sort(newIntSlice(nums))
 	for i := 0; i < 1000; i++ {
-		num := h.Pop()
+		num := h.Top()
+		ni := num.(newInt)
+		if num == nil {
+			t.Error("got nil when Top")
+		}
+		if (ni.a + ni.b) != (nums[i].a + nums[i].b) {
+			t.Error(nums[i], " is expected, got ", num)
+		}
+		num = h.Pop()
 		if num == nil {
 			t.Error("got nil when Pop ")
 		}
-		ni := num.(newInt)
+		ni = num.(newInt)
 		if (ni.a + ni.b) != (nums[i].a + nums[i].b) {
 			t.Error(nums[i], " is expected, got ", num)
 		}
