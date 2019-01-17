@@ -1,6 +1,8 @@
 package containers
 
-import "github.com/pkg/errors"
+import (
+	"fmt"
+)
 
 type Set struct {
 	core map[interface{}]bool
@@ -29,7 +31,7 @@ func (s *Set) All() []interface{} {
 // Remove remove the specified element in set.
 func (s *Set) Remove(elem interface{}) error {
 	if _, ok := s.core[elem]; !ok {
-		return errors.New("no such element in Set")
+		return fmt.Errorf("no such element in Set")
 	}
 	delete(s.core, elem)
 	return nil

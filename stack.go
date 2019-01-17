@@ -1,9 +1,5 @@
 package containers
 
-import (
-	"errors"
-)
-
 const initStackSize = 8
 
 type Stack struct {
@@ -25,17 +21,17 @@ func (s *Stack) Push(elem interface{}) {
 }
 
 // Peek return the first element in stack but never remove it.
-func (s *Stack) Peek() (elem interface{}, err error) {
+func (s *Stack) Peek() (elem interface{}) {
 	if s.size <= 0 {
-		return nil, errors.New("call Peek() on a empty queue")
+		return nil
 	}
-	return s.buffer[s.top-1], nil
+	return s.buffer[s.top-1]
 }
 
 // PopHead remove the first element in stack.
-func (s *Stack) Pop() (elem interface{}, err error) {
+func (s *Stack) Pop() (elem interface{}) {
 	if s.size <= 0 {
-		return nil, errors.New("call Pop() on a empty queue")
+		return nil
 	}
 	elem = s.buffer[s.top-1]
 	s.buffer[s.top-1] = nil
