@@ -10,16 +10,16 @@ func TestStack(t *testing.T) {
 		s.Push(i)
 	}
 	for i := 1000; i >= 0; i-- {
-		ele, err := s.Peek()
-		if err != nil {
-			t.Error("error: ", err)
+		ele := s.Peek()
+		if ele == nil {
+			t.Error("empty stack when Peek.")
 		}
 		if ele = ele.(int); ele != i {
 			t.Error(i, " is expected")
 		}
-		ele, err = s.Pop()
-		if err != nil {
-			t.Error("error: ", err)
+		ele = s.Pop()
+		if ele == nil {
+			t.Error("empty stack when Pop. ")
 		}
 		if ele = ele.(int); ele != i {
 			t.Error(i, " is expected")
