@@ -35,6 +35,19 @@ func (s *Stack) Pop() (elem interface{}) {
 	elem = s.buffer[s.size-1]
 	s.buffer[s.size-1] = nil
 	s.size--
+	n := len(s.buffer)
+	// shrink for saving memory
+	if 4*s.size < n && n > initStackSize {
+		var newSize int
+		if s.size < initStackSize {
+			newSize = initStackSize
+		} else {
+			newSize = s.size
+		}
+		newBuff := make([]interface{}, newSize)
+		copy(newBuff, s.buffer)
+		s.buffer = newBuff
+	}
 	return
 }
 
