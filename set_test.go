@@ -12,6 +12,9 @@ func TestSetNormal(t *testing.T) {
 		for j := 0; j < 2; j++ {
 			s.Add(i)
 		}
+		if !s.Exist(i) {
+			t.Error(i, " should have existed in set")
+		}
 	}
 	if s.Size() != 1000 {
 		t.Error("size of Set is expected ", 1000)

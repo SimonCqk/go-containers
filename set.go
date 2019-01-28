@@ -37,6 +37,12 @@ func (s *Set) Remove(elem interface{}) error {
 	return nil
 }
 
+// Exist return whether a given element has been contained by set.
+func (s *Set) Exist(elem interface{}) bool {
+	_, exist := s.core[elem]
+	return exist
+}
+
 // Size return current number of elements in set.
 func (s *Set) Size() int {
 	return len(s.core)
