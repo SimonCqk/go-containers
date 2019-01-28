@@ -3,8 +3,8 @@ package containers
 const initStackSize = 8
 
 type Stack struct {
-	buffer            []interface{}
-	top, bottom, size int
+	buffer []interface{}
+	size   int
 }
 
 func NewStack() *Stack {
@@ -15,8 +15,7 @@ func (s *Stack) Push(elem interface{}) {
 	if s.size == len(s.buffer) {
 		s.grow()
 	}
-	s.buffer[s.top] = elem
-	s.top++
+	s.buffer[s.size] = elem
 	s.size++
 }
 
@@ -25,7 +24,7 @@ func (s *Stack) Peek() (elem interface{}) {
 	if s.size <= 0 {
 		return nil
 	}
-	return s.buffer[s.top-1]
+	return s.buffer[s.size-1]
 }
 
 // PopHead remove the first element in stack.
@@ -33,9 +32,8 @@ func (s *Stack) Pop() (elem interface{}) {
 	if s.size <= 0 {
 		return nil
 	}
-	elem = s.buffer[s.top-1]
-	s.buffer[s.top-1] = nil
-	s.top--
+	elem = s.buffer[s.size-1]
+	s.buffer[s.size-1] = nil
 	s.size--
 	return
 }
