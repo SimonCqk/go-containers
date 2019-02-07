@@ -5,17 +5,17 @@ import (
 )
 
 type Set struct {
-	core map[interface{}]bool
+	core map[interface{}]struct{}
 }
 
 func NewSet() *Set {
-	return &Set{core: make(map[interface{}]bool)}
+	return &Set{core: make(map[interface{}]struct{})}
 }
 
 // Add add a new element into set.
 func (s *Set) Add(elem interface{}) {
 	if _, ok := s.core[elem]; !ok {
-		s.core[elem] = true
+		s.core[elem] = struct{}{}
 	}
 }
 
