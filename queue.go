@@ -4,9 +4,6 @@ import (
 	"math"
 )
 
-// init size of queue, must be a number of power of 2.
-const initQueueSize = 8
-
 // Queue is a data structure queue implementation based on ring buffer,
 // it can be replaced by any Type inside buffer, so it's a generic impl.
 // However, it's not Thread-Safe.

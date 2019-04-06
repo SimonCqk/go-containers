@@ -1,7 +1,5 @@
 package containers
 
-const initStackSize = 8
-
 type Stack struct {
 	buffer []interface{}
 	size   int

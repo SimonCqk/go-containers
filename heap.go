@@ -6,8 +6,6 @@ import (
 	"reflect"
 )
 
-const initHeapSize = 8
-
 var lessComparator map[reflect.Kind]LessCompFunc
 
 // LessCompFunc provide a entry for compare two instance by customized rule.
