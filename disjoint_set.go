@@ -1,24 +1,26 @@
 package containers
 
 import (
+	"bytes"
 	"errors"
+	"fmt"
 	"gonum.org/v1/gonum/graph"
 )
 
 type DisjointSet struct {
-	sets map[interface{}]*subset
+	sets map[interface{}]*rankedNode
 }
 
-type subset struct {
+type rankedNode struct {
 	rank   int
 	parent interface{}
 }
 
 // NewDisjointSet create a new disjoint set with init values.
 func NewDisjointSet(vals []interface{}) *DisjointSet {
-	s := DisjointSet{}
+	s := DisjointSet{sets: make(map[interface{}]*rankedNode)}
 	for _, val := range vals {
-		s.sets[val] = &subset{parent: nil}
+		s.Add(val)
 	}
 	return &s
 }
@@ -28,7 +30,7 @@ func (s *DisjointSet) Add(val interface{}) {
 	if _, present := s.sets[val]; present {
 		return
 	}
-	s.sets[val] = &subset{parent: nil}
+	s.sets[val] = &rankedNode{parent: val}
 }
 
 // Remove remove a exist value from disjoint value.
@@ -44,7 +46,7 @@ func (s *DisjointSet) Remove(val interface{}) error {
 // find return parent node of specified value.
 func (s *DisjointSet) find(val interface{}) interface{} {
 	if s.sets[val].parent != val {
-		s.sets[val].parent = s.find(val)
+		s.sets[val].parent = s.find(s.sets[val].parent)
 	}
 	return s.sets[val].parent
 }
@@ -63,23 +65,35 @@ func (s *DisjointSet) Union(x, y interface{}) {
 	}
 }
 
+func (s *DisjointSet) String() string {
+	var buff bytes.Buffer
+	for val, node := range s.sets {
+		buff.WriteString(fmt.Sprintf("%v -> %v\n", val, node.parent))
+	}
+	return buff.String()
+}
+
 // HasCycle detect whether cycle exists in undirected graph.
 func HasCycle(graph graph.Graph) bool {
-	set := NewDisjointSet([]interface{}{})
+	set := NewDisjointSet(nil)
 	nodes := graph.Nodes()
 	if nodes.Len() == 0 {
 		return false
 	}
-	for node := nodes.Node(); nodes.Next(); node = nodes.Node() {
+	for nodes.Next() {
+		node := nodes.Node()
 		// find nodes directly connected with this source node.
 		toNodes := graph.From(node.ID())
 		if toNodes.Len() == 0 {
 			continue
 		}
-		for toNode := toNodes.Node(); toNodes.Next(); toNode = toNodes.Node() {
+		set.Add(node.ID())
+		for toNodes.Next() {
+			toNode := toNodes.Node()
 			edge := graph.Edge(node.ID(), toNode.ID())
-			x := set.find(edge.From())
-			y := set.find(edge.To())
+			set.Add(edge.To().ID())
+			x := set.find(edge.From().ID())
+			y := set.find(edge.To().ID())
 			if x == y {
 				return true
 			}
