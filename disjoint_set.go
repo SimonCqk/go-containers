@@ -1,6 +1,9 @@
 package containers
 
-import "errors"
+import (
+	"errors"
+	"gonum.org/v1/gonum/graph"
+)
 
 type DisjointSet struct {
 	sets map[interface{}]*subset
@@ -58,4 +61,30 @@ func (s *DisjointSet) Union(x, y interface{}) {
 		s.sets[xRoot].parent = yRoot
 		s.sets[xRoot].rank++
 	}
+}
+
+// HasCycle detect whether cycle exists in undirected graph.
+func HasCycle(graph graph.Graph) bool {
+	set := NewDisjointSet([]interface{}{})
+	nodes := graph.Nodes()
+	if nodes.Len() == 0 {
+		return false
+	}
+	for node := nodes.Node(); nodes.Next(); node = nodes.Node() {
+		// find nodes directly connected with this source node.
+		toNodes := graph.From(node.ID())
+		if toNodes.Len() == 0 {
+			continue
+		}
+		for toNode := toNodes.Node(); toNodes.Next(); toNode = toNodes.Node() {
+			edge := graph.Edge(node.ID(), toNode.ID())
+			x := set.find(edge.From())
+			y := set.find(edge.To())
+			if x == y {
+				return true
+			}
+			set.Union(x, y)
+		}
+	}
+	return false
 }
