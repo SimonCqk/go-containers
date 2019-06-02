@@ -11,6 +11,7 @@ type subset struct {
 	parent interface{}
 }
 
+// NewDisjointSet create a new disjoint set with init values.
 func NewDisjointSet(vals []interface{}) *DisjointSet {
 	s := DisjointSet{}
 	for _, val := range vals {
@@ -19,6 +20,7 @@ func NewDisjointSet(vals []interface{}) *DisjointSet {
 	return &s
 }
 
+// Add add a new value into disjoint set.
 func (s *DisjointSet) Add(val interface{}) {
 	if _, present := s.sets[val]; present {
 		return
@@ -26,6 +28,7 @@ func (s *DisjointSet) Add(val interface{}) {
 	s.sets[val] = &subset{parent: nil}
 }
 
+// Remove remove a exist value from disjoint value.
 func (s *DisjointSet) Remove(val interface{}) error {
 	val, present := s.sets[val]
 	if !present {
@@ -35,6 +38,7 @@ func (s *DisjointSet) Remove(val interface{}) error {
 	return nil
 }
 
+// find return parent node of specified value.
 func (s *DisjointSet) find(val interface{}) interface{} {
 	if s.sets[val].parent != val {
 		s.sets[val].parent = s.find(val)
@@ -42,6 +46,7 @@ func (s *DisjointSet) find(val interface{}) interface{} {
 	return s.sets[val].parent
 }
 
+// Union make two values unite together.
 func (s *DisjointSet) Union(x, y interface{}) {
 	xRoot := s.find(x)
 	yRoot := s.find(y)
